@@ -1,0 +1,129 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Dancing+Script:wght@600&display=swap');
+
+:root {
+  --primary: #0B1C3E; 
+  --secondary: #D4AF37;
+  --bg-dark: #050A18;
+  --text-light: #F8F9FA;
+  --text-muted: #B0B3B8;
+  --glass: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --paper-color: #f4e4bc;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Outfit', sans-serif;
+  background-color: var(--bg-dark);
+  color: var(--text-light);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.3s ease;
+}
+
+button {
+  cursor: pointer;
+  font-family: 'Outfit', sans-serif;
+  border: none;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+/* Utilities */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--secondary), #B8860B);
+  color: var(--primary);
+  padding: 0.8rem 2rem;
+  border-radius: 50px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(212, 175, 55, 0.5);
+}
+
+.card {
+  background: var(--glass);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  padding: 2rem;
+}
+
+/* Book Styles */
+.book-container {
+  display: flex;
+  background-color: var(--paper-color);
+  color: #2c3e50;
+  border-radius: 10px;
+  box-shadow: 
+    inset 0 0 30px rgba(0,0,0,0.1),
+    10px 20px 50px rgba(0,0,0,0.5), 
+    0 0 0 20px #5e3b24; /* Hardcover border */
+  perspective: 1500px;
+  max-width: 1000px; /* Wider book */
+  margin: 2rem auto;
+  min-height: 700px;
+}
+
+.book-page {
+  flex: 1;
+  padding: 3rem;
+  position: relative;
+  background: 
+    linear-gradient(to right, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0) 5%),
+    linear-gradient(to left, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0) 5%);
+}
+
+.book-page.left {
+  border-right: 2px solid rgba(0,0,0,0.1);
+  background: linear-gradient(90deg, #e3cba5 0%, #f4e4bc 20%, #f4e4bc 100%);
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+}
+
+.book-page.right {
+  background: linear-gradient(90deg, #f4e4bc 0%, #f4e4bc 80%, #e3cba5 100%);
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+}
+
+.handwritten {
+  font-family: 'Dancing Script', cursive;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.8s ease-out forwards;
+}
