@@ -5,8 +5,13 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import ChangePassword from './pages/ChangePassword';
 import Gallery from './pages/Gallery';
-import Admin from './pages/Admin';
+// import Admin from './pages/Admin'; // Deprecated in favor of new layout
 import Guestbook from './pages/Guestbook';
+import AdminLayout from './components/admin/AdminLayout';
+import AdminDashboard from './pages/admin/AdminDashboard';
+import UsersPage from './pages/admin/UsersPage';
+import GuestbookAdminPage from './pages/admin/GuestbookAdminPage';
+import GalleryAdminPage from './pages/admin/GalleryAdminPage';
 import './index.css';
 
 const ProtectedRoute = ({ children, adminOnly = false }) => {
@@ -47,14 +52,21 @@ function App() {
               </ProtectedRoute>
             } 
           />
+          
+          {/* Admin Routes */}
           <Route 
             path="/admin" 
             element={
               <ProtectedRoute adminOnly={true}>
-                <Admin />
+                <AdminLayout />
               </ProtectedRoute>
             } 
-          />
+          >
+            <Route index element={<AdminDashboard />} />
+            <Route path="users" element={<UsersPage />} />
+            <Route path="guestbook" element={<GuestbookAdminPage />} />
+            <Route path="gallery" element={<GalleryAdminPage />} />
+          </Route>
         </Routes>
       </AuthProvider>
     </Router>

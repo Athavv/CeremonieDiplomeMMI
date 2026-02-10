@@ -1,37 +1,28 @@
 import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
-import { Mail, Lock, ArrowLeft } from 'lucide-react';
-import Navbar from '../components/Navbar';
+import { ArrowLeft } from 'lucide-react';
 
 const Login = () => {
-    const [email, setEmail] = useState('');
+    const [identifier, setIdentifier] = useState('');
     const [password, setPassword] = useState('');
     const { login } = useAuth();
     const navigate = useNavigate();
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
-    const validateEmail = (email) => {
-        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-    };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
 
-        if(!email || !password) {
+        if(!identifier || !password) {
             return setError('Veuillez remplir tous les champs');
-        }
-
-        if(!validateEmail(email)) {
-            return setError('Veuillez entrer un email valide');
         }
 
         setLoading(true);
 
         try {
-            const result = await login(email, password);
+            const result = await login(identifier, password);
             if (result.success) {
                 if (result.firstLogin) {
                     navigate('/change-password');
@@ -122,14 +113,14 @@ const Login = () => {
                                 fontWeight: '600',
                                 fontSize: '1.1rem'
                             }}>
-                                Email
+                                Identifiant (prenom.nom)
                             </label>
                             <div style={{ position: 'relative' }}>
                                 <input
-                                    type="email"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    placeholder="exemple@etu.uni-eiffel.fr"
+                                    type="text"
+                                    value={identifier}
+                                    onChange={(e) => setIdentifier(e.target.value)}
+                                    placeholder="thomas.pesquet"
                                     style={{
                                         width: '100%',
                                         padding: '0.75rem 0',

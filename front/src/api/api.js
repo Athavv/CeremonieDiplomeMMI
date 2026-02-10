@@ -30,4 +30,18 @@ api.interceptors.response.use(
   }
 );
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api';
+
+export function getImageUrl(imageUrl) {
+  if (!imageUrl) return null;
+  if (imageUrl.startsWith("http")) return imageUrl;
+  // If it's a data URL (base64)
+  if (imageUrl.startsWith("data:")) return imageUrl;
+  
+  const baseUrl = API_BASE_URL.replace("/api", "");
+  return imageUrl.startsWith("/")
+    ? `${baseUrl}${imageUrl}`
+    : `${baseUrl}/api/files/${imageUrl}`;
+}
+
 export default api;
