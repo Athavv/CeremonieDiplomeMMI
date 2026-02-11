@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import mmi.ceremonie.diplome.security.JwtService;
 import mmi.ceremonie.diplome.dto.AuthenticationRequest;
 import mmi.ceremonie.diplome.dto.AuthenticationResponse;
-import mmi.ceremonie.diplome.dto.ChangePasswordRequest;
 import mmi.ceremonie.diplome.dto.RegisterRequest;
 import mmi.ceremonie.diplome.model.Role;
 import mmi.ceremonie.diplome.model.User;

@@ -85,16 +85,13 @@ const Gallery = () => {
 
     return (
         <div className="min-h-screen bg-[#F9F9F9] font-sans pt-20">
-             {/* Header Section */}
              <div className="max-w-7xl mx-auto px-6 py-12">
                 <h1 className="text-5xl font-serif text-[#071341] uppercase tracking-wide border-b-4 border-[#071341] inline-block pb-2 mb-8">
                     Galerie Photo
                 </h1>
             </div>
 
-            {/* Hero Section */}
             <div className="bg-[#071341] text-white py-16 px-6 relative mb-12">
-                 {/* Decorative elements */}
                 <div className="absolute top-0 right-0 w-64 h-64 bg-[#B8AB38] opacity-10 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl"></div>
 
                 <div className="max-w-7xl mx-auto text-center relative z-10">
@@ -160,7 +157,6 @@ const Gallery = () => {
                 )}
             </div>
 
-            {/* Lightbox Overlay */}
             {selectedImageIndex !== null && (
                 <div 
                     className="fixed inset-0 z-50 bg-[#071341]/95 flex items-center justify-center p-4 backdrop-blur-sm"

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { guestbookService } from '../api/guestbook.service';
 import { getImageUrl } from '../api/api';
-import { Camera, RefreshCw, Trash2, ChevronLeft, ChevronRight, Send, Image as ImageIcon } from 'lucide-react';
+import { Camera, RefreshCw, Trash2, Image as ImageIcon } from 'lucide-react';
 
 const Guestbook = () => {
     const [messages, setMessages] = useState([]);
