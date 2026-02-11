@@ -1,67 +1,67 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
+
 const Navbar = () => {
-  const { user, logout } = useAuth();
-  const navigate = useNavigate();
+ const { user, logout } = useAuth();
+ const navigate = useNavigate();
 
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
-  };
 
-  return (
-    <nav style={{
-      position: 'fixed',
-      top: 0,
-      width: '100%',
-      zIndex: 1000,
-      background: 'rgba(5, 10, 24, 0.8)',
-      backdropFilter: 'blur(10px)',
-      borderBottom: '1px solid rgba(255,255,255,0.1)',
-      padding: '1rem 2rem'
-    }}>
-      <div className="container" style={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center'
-      }}>
-        <Link to="/" style={{
-          fontSize: '1.5rem',
-          fontFamily: 'Playfair Display',
-          fontWeight: 'bold',
-          color: 'var(--secondary)'
-        }}>
-          MMI 2025
-        </Link>
+ // const [isScrolled, setIsScrolled] = useState(false);
+ const [open, setOpen] = useState(false);
 
-        <div style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
-          <Link to="/">Accueil</Link>
-          <Link to="/guestbook">Livre d'or</Link>
-          {user && <Link to="/gallery">Galerie</Link>}
-          {user?.role === 'ADMIN' && <Link to="/admin">Admin</Link>}
-          
-          {user ? (
-            <button 
-              onClick={handleLogout}
-              style={{
-                background: 'transparent',
-                border: '1px solid var(--secondary)',
-                color: 'var(--secondary)',
-                padding: '0.5rem 1.5rem',
-                borderRadius: '50px'
-              }}
-            >
-              Déconnexion
-            </button>
-          ) : (
-            <Link to="/login" className="btn-primary">Connexion</Link>
-          )}
-        </div>
-      </div>
-    </nav>
-  );
+
+ // useEffect(() => {
+ //   const handleScroll = () => {
+ //     setIsScrolled(window.scrollY > 50);
+ //   };
+
+
+ return (
+   <nav
+     className="fixed top-0 left-0 w-full flex items-center justify-between py-4 px-6 uppercase z-50 transition-all duration-300 bg-[#071341]"
+   >
+     <img src="/logouge.png" className="w-10 h-10" alt="Logo" />
+     <ul className="hidden md:flex items-center gap-8 text-sm text-white">
+       <li><Link to="/">Accueil</Link></li>
+       <li><Link to="/planning">Planning</Link></li>
+       <li><Link to="/gallery">Galerie photo</Link></li>
+       <li><Link to="/guestbook">Livret d'or</Link></li>
+       {user?.role === 'ADMIN' && (
+         <li><Link to="/admin">Admin</Link></li>
+       )}
+       {!user ? (
+         <li><Link to="/login">Connexion</Link></li>
+       ) : (
+         <li><button onClick={logout} className="hover:text-gray-300">Déconnexion</button></li>
+       )}
+     </ul>
+     <button
+       className="md:hidden text-white text-3xl" onClick={() => setOpen(!open)}>☰
+     </button>
+     {open && (
+       <div className="absolute top-full left-0 w-full bg-[#071341] text-white flex flex-col items-center py-4 gap-4 md:hidden">
+         <Link to="/" onClick={() => setOpen(false)}>Accueil</Link>
+         <Link to="/planning" onClick={() => setOpen(false)}>Planning</Link>
+         <Link to="/gallery" onClick={() => setOpen(false)}>Galerie photo</Link>
+         <Link to="/guestbook" onClick={() => setOpen(false)}>Livret d'or</Link>
+         {user?.role === 'ADMIN' && (
+           <Link to="/admin" onClick={() => setOpen(false)}>Admin</Link>
+         )}
+         {!user ? (
+           <Link to="/login" onClick={() => setOpen(false)}>Connexion</Link>
+         ) : (
+           <button onClick={() => { logout(); setOpen(false); }} className="text-white hover:text-gray-300">Déconnexion</button>
+         )}
+       </div>
+     )}
+   </nav>
+ );
 };
 
+
 export default Navbar;
+
+
+

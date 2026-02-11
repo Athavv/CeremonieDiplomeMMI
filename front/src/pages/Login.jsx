@@ -74,7 +74,6 @@ const Login = () => {
                     </Link>
 
                     <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
-                        <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🎓</div>
                         <h2 style={{ 
                             fontSize: '2rem', 
                             color: '#071341', 

@@ -14,14 +14,14 @@ export default function EditProfileModal({ user, onClose, onSuccess }) {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  // Upload removed for now as backend might not support it
+
   
   useEffect(() => {
     if (user) {
       setFormData({
         firstname: user.firstname || "",
         lastname: user.lastname || "",
-        email: user.email || "", // In diplomeMmi, username might be email?
+        email: user.email || "",
         password: "",
         confirmPassword: "",
         imageUrl: user.imageUrl || "",
@@ -61,7 +61,7 @@ export default function EditProfileModal({ user, onClose, onSuccess }) {
         submitData.password = formData.password;
       }
 
-      // Mock update
+
       const result = await userService.updateUser(user.id, submitData);
       if (result.success) {
         onSuccess();

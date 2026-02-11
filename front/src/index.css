@@ -1,47 +1,21 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Dancing+Script:wght@600&display=swap');
 @import "tailwindcss";
 
-@theme {
-  --font-family-poppins: 'Poppins', sans-serif;
 
-  --color-vert: #D3F26A;
-  --color-blanc: #FFFFFF;
-  --color-fond: #F9F9F9;
-  --color-noir: #050517;
-  --color-violet: #9F8BE9;
-  --color-orange: #FF4F01;
-  --color-beige: #F5F5EA;
-  --color-beige1: #CAC9B7;
-  --color-beige2: #A3A28C;
-  --color-beige3: #5E5F4A;
-}
-
-@layer utilities {
-  /* Hide scrollbar for Chrome, Safari and Opera */
-  .no-scrollbar::-webkit-scrollbar {
-    display: none;
-  }
-  /* Hide scrollbar for IE, Edge and Firefox */
-  .no-scrollbar {
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
-  }
-  
-  .font-poppins { 
-    font-family: 'Poppins', sans-serif; 
-  } 
-}
-
-/* Custom base styles */
 body {
-  font-family: var(--font-family-poppins);
+ font-family: 'Poppins', sans-serif;
 }
 
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
+
+h1, h2, h3, h4, h5, h6 {
+ font-family: 'Playfair Display', serif;
+}
+h1 {
+ font-weight: 300;
+ letter-spacing: 0.5px;
 }
 
-input[type="number"] {
-  -moz-appearance: textfield;
+
+p {
+ line-height: 1.7;
 }

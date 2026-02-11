@@ -1,6 +1,6 @@
 import api from "./api";
 
-// Mock data for fallback
+
 const MOCK_USERS = [
   { id: 1, firstname: "Admin", lastname: "User", email: "admin@test.com", role: "ADMIN", createdAt: new Date().toISOString() },
   { id: 2, firstname: "John", lastname: "Doe", email: "john@test.com", role: "USER", createdAt: new Date(Date.now() - 86400000).toISOString() },
@@ -26,13 +26,25 @@ async function getCurrentUser() {
   }
 }
 
+async function createUser(userData) {
+    const { data } = await api.post("/users", userData);
+    return { success: true, data };
+}
+
 async function updateUser(userId, updatedData) {
-   // Mock update
-   return { success: true, data: { ...updatedData, id: userId } };
+    const { data } = await api.put(`/users/${userId}`, updatedData);
+    return { success: true, data };
+}
+
+async function deleteUser(userId) {
+    await api.delete(`/users/${userId}`);
+    return { success: true };
 }
 
 export const userService = {
   getAllUsers,
   getCurrentUser,
+  createUser,
   updateUser,
+  deleteUser
 };

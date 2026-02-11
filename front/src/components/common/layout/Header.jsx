@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../../contexts/AuthContext";
-import { LogOut, ShoppingCart } from "lucide-react"; // ShoppingCart kept just in case but likely unused
+import { LogOut, ShoppingCart } from "lucide-react";
 import { ROUTES } from "../../../constants";
 
 export default function Header() {

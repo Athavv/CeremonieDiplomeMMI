@@ -11,16 +11,17 @@ const postMessage = async (message) => {
 };
 
 const getPendingMessages = async () => {
-    const response = await api.get('/admin/guestbook/pending');
+    const response = await api.get('/guestbook');
     return response.data;
 };
 
 const approveMessage = async (id) => {
-    await api.put(`/admin/guestbook/${id}/approve`);
+    // Auto-approved now, keeping for compatibility if needed or removing
+    // await api.put(`/admin/guestbook/${id}/approve`);
 };
 
 const deleteMessage = async (id) => {
-    await api.delete(`/admin/guestbook/${id}`); // supports both admin and potential public delete endpoint
+    await api.delete(`/guestbook/${id}`);
 };
 
 export const guestbookService = {

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { guestbookService } from "../../api/guestbook.service";
-// Inline formatDate
+import { getImageUrl } from "../../api/api";
+
 const formatDate = (dateString) => {
   if (!dateString) return "";
   const date = new Date(dateString);
@@ -91,7 +92,7 @@ export default function GuestbookAdminPage() {
                                 <div className="flex items-center gap-2 text-xs text-blue-600">
                                     <ImageIcon className="h-4 w-4" />
                                     <span>Photo incluse</span>
-                                    <img src={msg.image} alt="Aperçu" className="h-10 w-10 object-cover rounded border border-gray-200" />
+                                    <img src={getImageUrl(msg.image)} alt="Aperçu" className="h-10 w-10 object-cover rounded border border-gray-200" />
                                 </div>
                             )}
                         </div>
@@ -101,13 +102,6 @@ export default function GuestbookAdminPage() {
                     </td>
                     <td className="py-4 px-6 text-right">
                       <div className="flex items-center justify-end gap-2">
-                        <button
-                          onClick={() => handleApprove(msg.id)}
-                          className="p-2 hover:bg-green-50 rounded-full text-gray-600 hover:text-green-600 transition-colors"
-                          title="Approuver"
-                        >
-                          <Check className="h-4 w-4" />
-                        </button>
                         <button
                           onClick={() => handleDelete(msg.id)}
                           className="p-2 hover:bg-red-50 rounded-full text-gray-600 hover:text-red-500 transition-colors"

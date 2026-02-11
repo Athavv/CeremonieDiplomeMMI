@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { guestbookService } from '../api/guestbook.service';
 import { galleryService } from '../api/gallery.service';
-import Navbar from '../components/Navbar';
+
 import { useAuth } from '../contexts/AuthContext';
 
 const Admin = () => {
@@ -60,7 +60,7 @@ const Admin = () => {
 
     return (
         <div style={{ paddingTop: '80px', minHeight: '100vh', background: 'var(--bg-dark)' }}>
-            <Navbar />
+
             <div className="container" style={{ padding: '4rem 2rem' }}>
                 <h1 style={{ color: 'var(--secondary)', marginBottom: '2rem' }}>Administration</h1>
                 

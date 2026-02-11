@@ -1,371 +1,298 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { guestbookService } from '../api/guestbook.service';
-import Navbar from '../components/Navbar';
-import { Camera, RefreshCw, Trash2, ChevronLeft, ChevronRight } from 'lucide-react'; 
-
-const MESSAGES_PER_PAGE = 3;
+import { getImageUrl } from '../api/api';
+import { Camera, RefreshCw, Trash2, ChevronLeft, ChevronRight, Send, Image as ImageIcon } from 'lucide-react';
 
 const Guestbook = () => {
     const [messages, setMessages] = useState([]);
-    const [paginatedMessages, setPaginatedMessages] = useState([]);
-    const [currentPage, setCurrentPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(1);
-    
-    const [newMessage, setNewMessage] = useState({ author: '', content: '' });
-    const [submitted, setSubmitted] = useState(false);
-    
-    const [isCameraOpen, setIsCameraOpen] = useState(false);
+    const [loading, setLoading] = useState(true);
+    const [newMessage, setNewMessage] = useState({ firstName: '', lastName: '', content: '' });
     const [capturedImage, setCapturedImage] = useState(null);
+    const [showCamera, setShowCamera] = useState(false);
     const videoRef = useRef(null);
     const canvasRef = useRef(null);
-    const streamRef = useRef(null);
+    const [page, setPage] = useState(1);
+    const messagesPerPage = 6; 
 
     useEffect(() => {
-        fetchMessages();
-        return () => {
-            stopCamera(); 
-        };
+        loadMessages();
     }, []);
 
-    useEffect(() => {
-        const total = Math.ceil(messages.length / MESSAGES_PER_PAGE);
-        setTotalPages(total || 1);
-        
-        const page = Math.min(currentPage, total || 1);
-        if (page !== currentPage) setCurrentPage(page);
-
-        const start = (page - 1) * MESSAGES_PER_PAGE;
-        setPaginatedMessages(messages.slice(start, start + MESSAGES_PER_PAGE));
-    }, [messages, currentPage]);
-
-    const fetchMessages = async () => {
+    const loadMessages = async () => {
         try {
-            const data = await guestbookService.getAllApprovedMessages();
+            const data = await guestbookService.getApprovedMessages();
             setMessages(data);
         } catch (err) {
             console.error(err);
+        } finally {
+            setLoading(false);
         }
     };
 
-    const handlePageChange = (direction) => {
-        if (direction === 'next' && currentPage < totalPages) {
-            setCurrentPage(currentPage + 1);
-        } else if (direction === 'prev' && currentPage > 1) {
-            setCurrentPage(currentPage - 1);
-        }
-    };
-
-    const startCamera = async () => {
-        setIsCameraOpen(true);
+    const handleCamera = async () => {
+        setShowCamera(true);
         try {
             const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-            streamRef.current = stream;
             if (videoRef.current) {
                 videoRef.current.srcObject = stream;
             }
         } catch (err) {
-            console.error("Error accessing camera:", err);
-            alert("Impossible d'accéder à la caméra. Vérifiez vos permissions.");
-            setIsCameraOpen(false);
+            console.error("Camera access denied:", err);
+            alert("Impossible d'accéder à la caméra.");
+            setShowCamera(false);
         }
-    };
-
-    const stopCamera = () => {
-        if (streamRef.current) {
-            streamRef.current.getTracks().forEach(track => track.stop());
-            streamRef.current = null;
-        }
-        setIsCameraOpen(false);
     };
 
     const takePhoto = () => {
         if (videoRef.current && canvasRef.current) {
-            const video = videoRef.current;
-            const canvas = canvasRef.current;
-            const context = canvas.getContext('2d');
+            const context = canvasRef.current.getContext('2d');
+            canvasRef.current.width = videoRef.current.videoWidth;
+            canvasRef.current.height = videoRef.current.videoHeight;
             
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            
-            context.drawImage(video, 0, 0, canvas.width, canvas.height);
-            
-            const imageDataUrl = canvas.toDataURL('image/png');
-            setCapturedImage(imageDataUrl);
+            context.drawImage(videoRef.current, 0, 0, canvasRef.current.width, canvasRef.current.height);
+            const dataUrl = canvasRef.current.toDataURL('image/jpeg');
+            setCapturedImage(dataUrl);
             stopCamera();
         }
     };
 
-    const retakePhoto = () => {
-        setCapturedImage(null);
-        startCamera();
-    };
-
-    const deletePhoto = () => {
-        setCapturedImage(null);
-        stopCamera();
+    const stopCamera = () => {
+        if (videoRef.current && videoRef.current.srcObject) {
+            videoRef.current.srcObject.getTracks().forEach(track => track.stop());
+        }
+        setShowCamera(false);
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (!newMessage.firstName || !newMessage.lastName || !newMessage.content) {
+            alert("Veuillez remplir tous les champs !");
+            return;
+        }
+
         try {
-            const messageToSend = { ...newMessage };
-            if (capturedImage) {
-                messageToSend.image = capturedImage; 
-            }
+            const messageToSend = {
+                author: `${newMessage.firstName} ${newMessage.lastName}`,
+                content: newMessage.content,
+                image: capturedImage
+            };
             
             await guestbookService.postMessage(messageToSend);
-            setSubmitted(true);
-            setNewMessage({ author: '', content: '' });
+            alert("Message envoyé ! Il sera visible après validation.");
+            setNewMessage({ firstName: '', lastName: '', content: '' });
             setCapturedImage(null);
-            setTimeout(() => setSubmitted(false), 5000); 
-            fetchMessages();
         } catch (err) {
             console.error(err);
+            alert("Erreur lors de l'envoi.");
         }
     };
 
+    const displayedMessages = messages.slice(0, page * messagesPerPage);
+
     return (
-        <div style={{ paddingTop: '80px', minHeight: '100vh', background: 'radial-gradient(circle, #2c3e50 0%, #000 100%)', display: 'flex', flexDirection: 'column' }}>
-            <Navbar />
-            
-            <div className="container" style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <div className="book-container animate-fade-in" style={{ paddingBottom: '2rem' }}>
-                    
-                    <div className="book-page left" style={{ color: '#4a3b2a', display: 'flex', flexDirection: 'column' }}>
-                        <h2 style={{ fontFamily: 'Playfair Display', fontSize: '2.5rem', marginBottom: '1rem', borderBottom: '2px solid #d4af37', paddingBottom: '0.5rem', display: 'inline-block' }}>
-                            Laissez une trace
-                        </h2>
-                        
-                        {submitted ? (
-                            <div style={{ 
-                                padding: '2rem', 
-                                border: '2px dashed #d4af37', 
-                                borderRadius: '10px', 
-                                textAlign: 'center',
-                                backgroundColor: 'rgba(212, 175, 55, 0.1)',
-                                marginTop: 'auto',
-                                marginBottom: 'auto'
-                            }}>
-                                <h3 style={{ color: '#8B4513', fontFamily: 'Dancing Script', fontSize: '2rem' }}>Merci !</h3>
-                                <p>Votre plume a été ajoutée à notre histoire.</p>
-                            </div>
-                        ) : (
-                            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem', flex: 1 }}>
-                                <div>
-                                    <label style={{ display: 'block', fontFamily: 'Playfair Display', fontWeight: 'bold', marginBottom: '0.5rem' }}>De la part de :</label>
-                                    <input 
-                                        type="text" 
-                                        value={newMessage.author}
-                                        onChange={(e) => setNewMessage({...newMessage, author: e.target.value})}
-                                        style={{ 
-                                            width: '100%', 
-                                            padding: '0.5rem', 
-                                            border: 'none', 
-                                            borderBottom: '2px solid #8B4513', 
-                                            background: 'transparent',
-                                            fontFamily: 'Dancing Script',
-                                            fontSize: '1.5rem',
-                                            outline: 'none',
-                                            color: '#2c3e50'
-                                        }}
-                                        placeholder="Votre nom..."
-                                        required
-                                    />
-                                </div>
-                                
-                                <div style={{ minHeight: '150px' }}>
-                                    {!isCameraOpen && !capturedImage && (
-                                        <button 
-                                            type="button" 
-                                            onClick={startCamera}
-                                            style={{
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                gap: '0.5rem',
-                                                padding: '0.5rem 1rem',
-                                                border: '1px dashed #8B4513',
-                                                background: 'rgba(139, 69, 19, 0.1)',
-                                                color: '#8B4513',
-                                                fontFamily: 'Playfair Display',
-                                                cursor: 'pointer',
-                                                borderRadius: '8px',
-                                                margin: '0.5rem 0'
-                                            }}
-                                        >
-                                            <Camera size={20} />
-                                            Ajouter une photo (Caméra)
-                                        </button>
-                                    )}
+        <div className="min-h-screen bg-[#F9F9F9] font-sans pt-20">
+            {/* Header Section */}
+            <div className="max-w-7xl mx-auto px-6 py-12">
+                <h1 className="text-5xl font-serif text-[#071341] uppercase tracking-wide border-b-4 border-[#071341] inline-block pb-2 mb-8">
+                    Le Livre d'Or
+                </h1>
+            </div>
 
-                                    {isCameraOpen && (
-                                        <div style={{ position: 'relative', width: '100%', borderRadius: '8px', overflow: 'hidden', border: '2px solid #8B4513' }}>
-                                            <video 
-                                                ref={videoRef} 
-                                                autoPlay 
-                                                playsInline 
-                                                style={{ width: '100%', display: 'block' }}
-                                            />
-                                            <div style={{ position: 'absolute', bottom: '10px', left: '0', right: '0', display: 'flex', justifyContent: 'center', gap: '10px' }}>
-                                                <button 
-                                                    type="button"
-                                                    onClick={takePhoto}
-                                                    style={{ 
-                                                        background: 'white', 
-                                                        color: 'black', 
-                                                        borderRadius: '50%', 
-                                                        width: '50px', 
-                                                        height: '50px', 
-                                                        border: '4px solid rgba(0,0,0,0.2)',
-                                                        cursor: 'pointer'
-                                                    }}
-                                                    title="Prendre la photo"
-                                                />
-                                                <button 
-                                                    type="button" 
-                                                    onClick={stopCamera}
-                                                    style={{ 
-                                                        background: 'rgba(0,0,0,0.5)', 
-                                                        color: 'white', 
-                                                        border: 'none', 
-                                                        padding: '5px 10px', 
-                                                        borderRadius: '5px' 
-                                                    }}
-                                                >
-                                                    Annuler
-                                                </button>
-                                            </div>
-                                        </div>
-                                    )}
+            {/* Hero / Form Section */}
+            <div className="bg-[#071341] text-white py-16 px-6 relative">
+                <div className="absolute top-0 left-0 w-full h-full overflow-hidden opacity-10 pointer-events-none">
+                     <div className="absolute -top-20 -right-20 w-96 h-96 bg-[#B8AB38] rounded-full blur-3xl"></div>
+                     <div className="absolute top-40 -left-20 w-72 h-72 bg-[#ffffff] rounded-full blur-3xl opacity-20"></div>
+                </div>
 
-                                    {capturedImage && (
-                                        <div style={{ position: 'relative', display: 'inline-block', border: '5px solid white', boxShadow: '0 4px 6px rgba(0,0,0,0.1)', transform: 'rotate(-2deg)' }}>
-                                            <img src={capturedImage} alt="Capture" style={{ maxWidth: '100%', maxHeight: '200px', display: 'block' }} />
-                                            <div style={{ position: 'absolute', top: '-10px', right: '-10px', display: 'flex', gap: '5px' }}>
-                                                <button 
-                                                    type="button" 
-                                                    onClick={retakePhoto}
-                                                    style={{ background: '#2c3e50', color: 'white', border: 'none', borderRadius: '50%', padding: '5px', cursor: 'pointer' }}
-                                                    title="Reprendre"
-                                                >
-                                                    <RefreshCw size={16} />
-                                                </button>
-                                                <button 
-                                                    type="button" 
-                                                    onClick={deletePhoto}
-                                                    style={{ background: '#c0392b', color: 'white', border: 'none', borderRadius: '50%', padding: '5px', cursor: 'pointer' }}
-                                                    title="Supprimer"
-                                                >
-                                                    <Trash2 size={16} />
-                                                </button>
-                                            </div>
-                                        </div>
-                                    )}
-                                    
-                                    <canvas ref={canvasRef} style={{ display: 'none' }} />
-                                </div>
+                <div className="relative z-10 max-w-7xl mx-auto">
+                    <div className="text-center mb-16 space-y-2">
+                        <h2 className="font-serif italic text-4xl mb-2">Laissez une trace.</h2>
+                        <p className="uppercase tracking-[0.2em] text-sm text-[#B8AB38]">CÉRÉMONIE DE REMISE DES DIPLÔMES</p>
+                    </div>
 
-                                <div>
-                                    <label style={{ display: 'block', fontFamily: 'Playfair Display', fontWeight: 'bold', marginBottom: '0.5rem' }}>Votre message :</label>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-16">
+                        {/* Form Card */}
+                        <div className="bg-white p-8 md:p-10 shadow-2xl relative text-gray-800">
+                             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#B8AB38] via-transparent to-[#B8AB38]"></div>
+
+                             <h3 className="text-[#B8AB38] text-center font-serif text-xl uppercase tracking-widest mb-10 border-b border-gray-100 pb-4">
+                                Le Livre d'Or Numérique
+                             </h3>
+                             
+                             <form onSubmit={handleSubmit} className="space-y-6">
+                                 <div className="grid grid-cols-2 gap-6">
+                                    <div className="space-y-1">
+                                        <label className="text-xs text-gray-400 uppercase tracking-wider ml-1">Nom</label>
+                                        <input 
+                                            type="text"
+                                            value={newMessage.lastName}
+                                            onChange={(e) => setNewMessage({...newMessage, lastName: e.target.value})}
+                                            className="w-full border-b border-gray-300 py-2 text-gray-800 placeholder-gray-300 focus:border-[#071341] focus:outline-none transition-colors bg-transparent"
+                                            placeholder="Votre nom"
+                                        />
+                                    </div>
+                                    <div className="space-y-1">
+                                        <label className="text-xs text-gray-400 uppercase tracking-wider ml-1">Prénom</label>
+                                        <input 
+                                            type="text"
+                                            value={newMessage.firstName}
+                                            onChange={(e) => setNewMessage({...newMessage, firstName: e.target.value})}
+                                            className="w-full border-b border-gray-300 py-2 text-gray-800 placeholder-gray-300 focus:border-[#071341] focus:outline-none transition-colors bg-transparent"
+                                            placeholder="Votre prénom"
+                                        />
+                                    </div>
+                                 </div>
+
+                                 <div className="space-y-1">
+                                    <label className="text-xs text-gray-400 uppercase tracking-wider ml-1">Message</label>
                                     <textarea 
                                         value={newMessage.content}
                                         onChange={(e) => setNewMessage({...newMessage, content: e.target.value})}
-                                        style={{ 
-                                            width: '100%', 
-                                            flex: 1,
-                                            minHeight: '100px',
-                                            padding: '1rem', 
-                                            border: '1px solid #d4af37', 
-                                            background: 'rgba(255,255,255,0.3)',
-                                            borderRadius: '5px',
-                                            fontFamily: 'Dancing Script',
-                                            fontSize: '1.2rem',
-                                            outline: 'none',
-                                            color: '#2c3e50',
-                                            lineHeight: '1.6'
-                                        }}
-                                        placeholder="Écrivez ici..."
-                                        required
+                                        className="w-full border-b border-gray-300 py-2 text-gray-800 placeholder-gray-300 focus:border-[#071341] focus:outline-none transition-colors bg-transparent resize-none h-24"
+                                        placeholder="Écrivez votre message ici..."
                                     />
+                                 </div>
+
+                                 {/* Camera / Photo Section */}
+                                 <div className="pt-2">
+                                     {!showCamera && !capturedImage && (
+                                         <button 
+                                            type="button" 
+                                            onClick={handleCamera}
+                                            className="flex items-center gap-2 text-sm text-gray-500 hover:text-[#071341] transition-colors"
+                                         >
+                                             <Camera className="h-4 w-4" />
+                                             Ajouter une photo souvenir
+                                         </button>
+                                     )}
+
+                                     {showCamera && (
+                                         <div className="relative bg-black rounded-lg overflow-hidden aspect-video mb-4">
+                                             <video ref={videoRef} autoPlay playsInline className="w-full h-full object-cover"></video>
+                                             <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-4">
+                                                 <button type="button" onClick={takePhoto} className="bg-white text-black p-3 rounded-full hover:scale-110 transition-transform shadow-lg z-20">
+                                                     <Camera className="h-6 w-6" />
+                                                 </button>
+                                                 <button type="button" onClick={stopCamera} className="bg-red-500 text-white p-3 rounded-full hover:scale-110 transition-transform shadow-lg z-20">
+                                                     <Trash2 className="h-6 w-6" />
+                                                 </button>
+                                             </div>
+                                         </div>
+                                     )}
+
+                                     {capturedImage && (
+                                         <div className="relative w-32 h-32 mt-2 group">
+                                             <img src={capturedImage} alt="Captured" className="w-full h-full object-cover rounded-lg border border-gray-200" />
+                                             <button 
+                                                type="button" 
+                                                onClick={() => setCapturedImage(null)}
+                                                className="absolute -top-2 -right-2 bg-red-500 text-white p-1 rounded-full shadow-md hover:bg-red-600 opacity-0 group-hover:opacity-100 transition-opacity"
+                                             >
+                                                 <Trash2 className="h-3 w-3" />
+                                             </button>
+                                         </div>
+                                     )}
+                                     <canvas ref={canvasRef} className="hidden"></canvas>
+                                 </div>
+
+                                 <button 
+                                    type="submit" 
+                                    className="w-full bg-[#071341] text-white py-4 uppercase tracking-[0.2em] hover:bg-[#B8AB38] hover:text-[#071341] transition-all duration-300 font-medium text-sm mt-8 border border-[#071341]"
+                                 >
+                                     Envoyer le message
+                                 </button>
+                             </form>
+                        </div>
+
+                        {/* Info/About Card */}
+                        <div className="bg-white p-8 md:p-10 shadow-2xl flex flex-col justify-between border-t-4 border-[#B8AB38] text-gray-800">
+                            <div>
+                                <h3 className="text-[#B8AB38] text-center font-serif text-xl uppercase tracking-widest mb-10 border-b border-gray-100 pb-4">
+                                    À Propos
+                                </h3>
+                                <div className="text-gray-600 text-justify leading-relaxed space-y-4 font-light">
+                                    <p>
+                                        Félicitations aux diplômés de la promotion MMI ! Cette cérémonie marque la fin d'un chapitre et le début d'une nouvelle aventure.
+                                    </p>
+                                    <p>
+                                        Ce livre d'or numérique est votre espace. Partagez vos meilleurs souvenirs, vos anecdotes de cours, vos remerciements aux professeurs et vos vœux de réussite pour vos camarades.
+                                    </p>
+                                    <p>
+                                        N'hésitez pas à immortaliser l'instant avec une photo directement depuis cette page. Vos messages resteront gravés comme témoignage de ces années inoubliables.
+                                    </p>
                                 </div>
-                                <button type="submit" style={{ 
-                                    alignSelf: 'flex-start',
-                                    padding: '0.8rem 2rem',
-                                    background: '#8B4513',
-                                    color: '#f4e4bc',
-                                    border: 'none',
-                                    borderRadius: '30px',
-                                    fontFamily: 'Playfair Display',
-                                    fontSize: '1.1rem',
-                                    cursor: 'pointer',
-                                    boxShadow: '2px 2px 5px rgba(0,0,0,0.3)'
-                                }}>
-                                    ✑ Signer
-                                </button>
-                            </form>
-                        )}
+                            </div>
+                            
+                            <div className="mt-10 pt-8 border-t border-gray-100 text-center">
+                                <p className="text-[#071341] font-serif italic text-lg mb-4">
+                                    "Le succès est la somme de petits efforts."
+                                </p>
+                            </div>
+                        </div>
                     </div>
+                </div>
+            </div>
 
-                    <div className="book-page right" style={{ color: '#4a3b2a', maxHeight: '700px', position: 'relative' }}>
-                        <h2 style={{ fontFamily: 'Playfair Display', fontSize: '2.5rem', marginBottom: '2rem', textAlign: 'center' }}>
-                            Mots Doux
-                        </h2>
-
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', height: '100%', paddingBottom: '3rem' }}>
-                            {paginatedMessages.length === 0 ? (
-                                <p style={{ textAlign: 'center', fontStyle: 'italic', opacity: 0.6 }}>Le livre est encore vierge... Soyez le premier !</p>
-                            ) : (
-                                paginatedMessages.map((msg, index) => (
-                                    <div key={msg.id} style={{ 
-                                        paddingBottom: '1.5rem', 
-                                        borderBottom: index !== paginatedMessages.length - 1 ? '1px solid rgba(139, 69, 19, 0.2)' : 'none'
-                                    }}>
-                                        {msg.image && (
-                                            <div style={{ 
-                                                marginBottom: '1rem', 
-                                                display: 'flex', 
-                                                justifyContent: 'center',
-                                                transform: `rotate(${Math.random() * 4 - 2}deg)`
-                                            }}>
-                                                <div style={{ padding: '5px', background: 'white', boxShadow: '0 2px 4px rgba(0,0,0,0.2)' }}>
-                                                    <img src={msg.image} alt="Souvenir" style={{ maxWidth: '100%', maxHeight: '150px', display: 'block' }} />
-                                                </div>
+            {/* Messages Grid Section */}
+            <div className="py-20 px-6 bg-[#F9F9F9]">
+                <div className="max-w-7xl mx-auto">
+                    {messages.length > 0 ? (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            {displayedMessages.map((msg) => (
+                                <div 
+                                    key={msg.id} 
+                                    className="group bg-[#071341] p-8 min-h-[280px] flex flex-col justify-between relative overflow-hidden transition-transform duration-300 hover:-translate-y-2 hover:shadow-2xl"
+                                >
+                                    {/* Gold Border Effect */}
+                                    <div className="absolute inset-0 border border-[#B8AB38]/30 m-2 pointer-events-none group-hover:border-[#B8AB38] transition-colors duration-500"></div>
+                                    
+                                    <div className="relative z-10 w-full">
+                                        <div className="flex justify-between items-start mb-6 w-full">
+                                            <div className="opacity-30">
+                                                 <ImageIcon className="h-8 w-8 text-[#B8AB38]" />
                                             </div>
-                                        )}
-                                        <p style={{ 
-                                            fontFamily: 'Dancing Script', 
-                                            fontSize: '1.4rem', 
-                                            lineHeight: '1.4', 
-                                            marginBottom: '0.5rem' 
-                                        }}>
+                                            {msg.image && (
+                                                <div className="h-16 w-16 rounded-lg overflow-hidden border border-[#B8AB38] shadow-lg">
+                                                    <img 
+                                                        src={getImageUrl(msg.image)} 
+                                                        alt="Souvenir" 
+                                                        className="w-full h-full object-cover transform transition-transform group-hover:scale-110" 
+                                                    />
+                                                </div>
+                                            )}
+                                        </div>
+                                        <p className="text-gray-300 font-light leading-relaxed italic text-lg line-clamp-4 overflow-hidden">
                                             "{msg.content}"
                                         </p>
-                                        <div style={{ textAlign: 'right', fontSize: '0.9rem', fontStyle: 'italic' }}>
-                                            — <strong>{msg.author}</strong>
-                                        </div>
                                     </div>
-                                ))
-                            )}
-                        </div>
-                        
-                        <div style={{ position: 'absolute', bottom: '20px', left: '0', right: '0', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '1rem' }}>
-                            <button 
-                                onClick={() => handlePageChange('prev')} 
-                                disabled={currentPage === 1}
-                                style={{ background: 'transparent', border: 'none', cursor: currentPage === 1 ? 'default' : 'pointer', opacity: currentPage === 1 ? 0.3 : 1 }}
-                            >
-                                <ChevronLeft size={24} />
-                            </button>
-                            <span style={{ fontFamily: 'Playfair Display' }}>Page {currentPage} / {totalPages}</span>
-                            <button 
-                                onClick={() => handlePageChange('next')} 
-                                disabled={currentPage === totalPages}
-                                style={{ background: 'transparent', border: 'none', cursor: currentPage === totalPages ? 'default' : 'pointer', opacity: currentPage === totalPages ? 0.3 : 1 }}
-                            >
-                                <ChevronRight size={24} />
-                            </button>
-                        </div>
-                    </div>
 
+                                    <div className="relative z-10 flex items-end justify-between mt-6 pt-6 border-t border-white/10">
+                                        <span className="text-[#B8AB38] font-serif uppercase tracking-widest text-sm">
+                                             — {msg.author}
+                                        </span>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="text-center py-20">
+                            <p className="text-gray-500 text-xl font-light">Soyez le premier à laisser un message !</p>
+                        </div>
+                    )}
+
+                    {/* Pagination / Load More */}
+                    {messages.length > displayedMessages.length && (
+                        <div className="text-center mt-16">
+                            <button 
+                                onClick={() => setPage(prev => prev + 1)}
+                                className="inline-flex items-center gap-2 bg-transparent text-[#071341] border border-[#071341] px-8 py-3 uppercase tracking-widest hover:bg-[#071341] hover:text-white transition-all duration-300"
+                            >
+                                <RefreshCw className="h-4 w-4" />
+                                Charger plus de messages
+                            </button>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

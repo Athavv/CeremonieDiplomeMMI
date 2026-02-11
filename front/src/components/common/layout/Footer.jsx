@@ -1,58 +1,52 @@
-import React from 'react';
-import { useNavigate } from "react-router-dom";
-import { ROUTES } from '../../../constants';
-
 export default function Footer() {
-  const navigate = useNavigate();
+   return (
+       <footer className="bg-[#071341] text-white py-12 px-6">
+           <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-10">
 
-  const handleNavigate = (route) => {
-    navigate(route, { replace: false }); 
-    window.scrollTo(0, 0); 
-  };
 
-  return (
-    <footer className="bg-[#050517] text-white mt-9">
-      <div className="px-6 py-12 sm:px-8 lg:px-16">
-        
-        <div className="mb-8">
-           <h2 className="text-2xl font-bold text-white">DIPLOME MMI</h2>
-        </div>
+               <div className="text-center md:text-left">
+                   <img src="/logouge.png" className="w-20 mx-auto md:mx-0 mb-4" />
+                   <p className="text-gray-300 text-sm leading-relaxed">
+                       Cérémonie MMI Meaux–
+                       Outils et ressources pour célébrer la réussite des étudiants.
+                   </p>
+               </div>
 
-        <nav className="flex flex-col gap-4 sm:flex-row sm:gap-20 mb-8">
-          <span
-            className="text-white text-base sm:text-lg lg:text-xl cursor-pointer hover:underline"
-            onClick={() => handleNavigate(ROUTES.HOME)}
-          >
-            Accueil
-          </span>
 
-          <span
-            className="text-white text-base sm:text-lg lg:text-xl cursor-pointer hover:underline"
-            onClick={() => handleNavigate(ROUTES.GUESTBOOK)}
-          >
-            Livre d'or
-          </span>
-           <span
-            className="text-white text-base sm:text-lg lg:text-xl cursor-pointer hover:underline"
-            onClick={() => handleNavigate(ROUTES.GALLERY)}
-          >
-            Galerie
-          </span>
-        </nav>
+               <div className="text-center md:text-left uppercase">
+                   <p className="mb-4">Lien du site</p>
+                   <ul className="flex flex-col gap-2 text-gray-300 text-sm">
+                       <li><a href="/">Accueil</a></li>
+                       <li><a href="/planning">Planning</a></li>
+                       <li><a href="/lorem1">Galerie photo</a></li>
+                       <li><a href="/lorem2">Livret d'or</a></li>
+                       <li><a href="/admin">Accès Admin</a></li>
+                   </ul>
+               </div>
 
-        <div className="flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-center mb-8 sm:text-base font-light">
-          <div>
-            <span className="underline">Contact</span> : contact@diplomemmi.fr
-          </div>
-        </div>
 
-        <hr className="mb-8" />
-
-        <div className="flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-center font-light sm:text-sm">
-          <p>© 2026 Diplome MMI. Tous les droits réservés.</p>
-        </div>
-
-      </div>
-    </footer>
-  );
+               <div className="text-center md:text-left uppercase">
+                   <p className="mb-4">Coordonées</p>
+                   <ul className="flex flex-col gap-2 text-gray-300 text-sm">
+                       <li>
+                           <a href="https://maps.app.goo.gl/45YgjqyrjQ67f1U58" target="_blank">
+                               ADRESSE : 10 Rue Winston Churchill, 77100 Meaux
+                           </a>
+                       </li>
+                       <li><a href="tel:+33768058507">TÉLÉPHONE : 07 68 05 85 07</a></li>
+                       <li><a href="mailto:saffanasalaoudine@gmail.com">EMAIL : saffanasalaoudine@gmail.com</a></li>
+                   </ul>
+               </div>
+           </div>
+           <div className="text-xs text-gray-400 mt-10 flex justify-between items-center px-10">
+               <p>© 2026 Cérémonie MMI – Université Gustave Eiffel</p>
+               <p className="cursor-pointer hover:underline">
+                   Politique de confidentialité
+               </p>
+           </div>
+       </footer>
+   );
 }
+
+
+
