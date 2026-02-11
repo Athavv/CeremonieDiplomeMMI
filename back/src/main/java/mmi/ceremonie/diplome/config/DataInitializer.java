@@ -19,10 +19,12 @@ public class DataInitializer implements CommandLineRunner {
     public void run(String... args) throws Exception {
         if (repository.findByEmail("admin@diplome.mmi").isEmpty()) {
             var admin = User.builder()
+                    .firstname("Admin")
+                    .lastname("System")
                     .email("admin@diplome.mmi")
                     .password(passwordEncoder.encode("admin"))
                     .role(Role.ADMIN)
-                    .firstLogin(false) // Admin doesn't need to change pw immediately for dev
+                    .firstLogin(false)
                     .build();
             repository.save(admin);
             System.out.println("Default admin user created: email=admin@diplome.mmi, password=admin");

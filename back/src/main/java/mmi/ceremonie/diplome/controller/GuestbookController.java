@@ -17,15 +17,27 @@ public class GuestbookController {
 
     private final GuestbookRepository repository;
 
+    @GetMapping("/guestbook")
+    @PreAuthorize("hasRole('ADMIN')")
+    public List<GuestbookMessage> getAllMessages() {
+        return repository.findAll();
+    }
+
     @GetMapping("/public/guestbook")
     public List<GuestbookMessage> getAllApprovedMessages() {
         return repository.findByApprovedTrueOrderByCreatedAtDesc();
     }
 
-    @PostMapping("/guestbook")
+    @PostMapping("/public/guestbook")
     public GuestbookMessage postMessage(@RequestBody GuestbookMessage message) {
         message.setCreatedAt(LocalDateTime.now());
-        message.setApproved(false); // Moderation required
+        message.setApproved(true);
         return repository.save(message);
+    }
+
+    @DeleteMapping("/guestbook/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public void deleteMessage(@PathVariable Long id) {
+        repository.deleteById(id);
     }
 }
