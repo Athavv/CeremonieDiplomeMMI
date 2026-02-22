@@ -13,9 +13,16 @@ const Planning = () => {
                     <p className="mt-5 md:w-[80%] text-justify font-poppins uppercase">
                         Un formulaire rapide pour nous indiquer votre présence et celle de vos invités. Ces informations nous aideront à organiser la cérémonie, le cocktail et l'accueil de manière optimale.
                     </p>
-                    <button className="mt-4 px-6 py-2 bg-white text-black font-medium uppercase hover:bg-[#B8AB38] hover:text-[#071341] transition-colors">
-                        Confirmer ma présence
-                    </button>
+               <div className='mt-7'>
+  <a
+    href="https://docs.google.com/forms/d/e/1FAIpQLSfx9eY1uR7xvrWalybG_hfuRhDxxuDWq58wPN_3XzMQAWpL5A/viewform?usp=dialog"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="mt-4 px-6 py-2 bg-white text-black font-medium uppercase hover:bg-[#B8AB38] hover:text-[#071341] transition-colors"
+  >
+    Confirmer ma présence
+  </a>
+</div>
                 </div>
                 <div className="py-5 md:py-16 md:col-span-7">
                     <div className="space-y-8">

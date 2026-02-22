@@ -15,7 +15,7 @@ const Login = () => {
         e.preventDefault();
         setError('');
 
-        if(!identifier || !password) {
+        if (!identifier || !password) {
             return setError('Veuillez remplir tous les champs');
         }
 
@@ -40,18 +40,21 @@ const Login = () => {
     };
 
     return (
-        <div style={{
-            minHeight: '100vh',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            backgroundImage: `linear-gradient(rgba(7, 19, 65, 0.6), rgba(7, 19, 65, 0.8)), url('https://images.unsplash.com/photo-1523580494863-6f3031224c94?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80')`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            padding: '1rem'
-        }}>
+        <div
+            style={{
+                minHeight: '100vh',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                backgroundImage: `linear-gradient(rgba(7, 19, 65, 0.6), rgba(7, 19, 65, 0.8)), url('/home.jpg')`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                padding: '1rem'
+            }}
+        >
+
             <div style={{
-                backgroundColor: 'white',
+                backgroundColor: 'rgba(255, 255, 255, 0.85)',
                 borderRadius: '2rem',
                 boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
                 maxWidth: '550px',
@@ -60,145 +63,134 @@ const Login = () => {
                 position: 'relative'
             }}>
                 <div style={{ padding: '3rem 2.5rem' }}>
-                    <Link to="/" style={{ 
-                        display: 'inline-flex', 
-                        alignItems: 'center', 
+                    <Link to="/" style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
                         gap: '0.5rem',
                         color: '#64748b',
                         fontSize: '0.9rem',
-                        fontWeight: '500',
                         textDecoration: 'none',
                         marginBottom: '2rem'
                     }}>
                         <ArrowLeft size={16} /> Retour à l'accueil
                     </Link>
-
-                    <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
-                        <h2 style={{ 
-                            fontSize: '2rem', 
-                            color: '#071341', 
-                            marginBottom: '0.5rem', 
-                            fontFamily: 'Playfair Display',
-                            fontWeight: 'bold' 
-                        }}>
-                            Connexion
-                        </h2>
-                        <p style={{ color: '#64748b' }}>Bienvenue, connectez-vous pour continuer</p>
-                    </div>
-
+<div 
+  style={{ 
+    textAlign: 'center', 
+    marginBottom: '2.5rem',
+    fontFamily: "'Poppins', sans-serif",
+    fontWeight: 400
+  }}
+>
+<img src="/iconconnexion.png" className='mx-auto' style={{ width: '100px'}} />
+  <h2 style={{
+      fontSize: '2rem',
+      color: '#071341',
+      marginBottom: '0.5rem',
+      fontFamily: "'Playfair Display', serif",
+      fontWeight: 400 
+    }}>
+    Connexion
+  </h2>
+  <p 
+    className="text-[#071341] font-regular"
+    style={{
+      fontFamily: "'Poppins', sans-serif",
+    }}
+  >
+    Bienvenue, connectez-vous pour continuer
+  </p>
+</div>
                     {error && (
-                        <div style={{ 
-                            marginBottom: '2rem', 
-                            padding: '1rem', 
-                            backgroundColor: '#fef2f2', 
-                            border: '1px solid #fee2e2', 
-                            borderRadius: '0.75rem', 
+                        <div style={{
+                            marginBottom: '2rem',
+                            padding: '1rem',
+                            backgroundColor: '#fef2f2',
+                            border: '1px solid #fee2e2',
+                            borderRadius: '0.75rem',
                             color: '#ef4444',
                             display: 'flex',
                             alignItems: 'center',
                             gap: '0.75rem',
                             fontSize: '0.9rem'
                         }}>
-                           ⚠️ {error}
+                            ⚠️ {error}
                         </div>
                     )}
 
-                    <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+                    <form
+                        onSubmit={handleSubmit}
+                        style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: '2rem',
+                            fontFamily: "'Playfair Display', serif",
+                            fontWeight: 400
+                        }}
+                    >
                         <div>
-                            <label style={{ 
-                                display: 'block', 
-                                marginBottom: '0.5rem', 
-                                color: '#1e293b', 
-                                fontWeight: '600',
-                                fontSize: '1.1rem'
-                            }}>
-                                Identifiant (prenom.nom)
-                            </label>
                             <div style={{ position: 'relative' }}>
                                 <input
                                     type="text"
                                     value={identifier}
                                     onChange={(e) => setIdentifier(e.target.value)}
-                                    placeholder="thomas.pesquet"
+                                    placeholder="Identifiant"
                                     style={{
                                         width: '100%',
                                         padding: '0.75rem 0',
                                         border: 'none',
-                                        borderBottom: '2px solid #e2e8f0',
+                                        borderBottom: '1px solid #071341',
                                         fontSize: '1rem',
                                         outline: 'none',
                                         transition: 'border-color 0.3s',
-                                        backgroundColor: 'transparent',
-                                        borderRadius: '0'
+                                        borderRadius: '0',
+                                        fontFamily: "'Playfair Display', serif",
+                                        fontWeight: 400
                                     }}
-                                    className="input-underline"
+                                    className="input-underline italic"
                                     required
                                 />
                             </div>
                         </div>
 
                         <div>
-                            <label style={{ 
-                                display: 'block', 
-                                marginBottom: '0.5rem', 
-                                color: '#1e293b', 
-                                fontWeight: '600',
-                                fontSize: '1.1rem'
-                            }}>
-                                Mot de passe
-                            </label>
                             <div style={{ position: 'relative' }}>
                                 <input
                                     type="password"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
-                                    placeholder="••••••••"
+                                    placeholder="Mot de passe"
                                     style={{
                                         width: '100%',
                                         padding: '0.75rem 0',
                                         border: 'none',
-                                        borderBottom: '2px solid #e2e8f0',
+                                        borderBottom: '1px solid #071341',
                                         fontSize: '1rem',
                                         outline: 'none',
                                         transition: 'border-color 0.3s',
-                                        backgroundColor: 'transparent',
-                                        borderRadius: '0'
+                                        
+                                        borderRadius: '0',
+                                        fontFamily: "'Playfair Display', serif",
+                                        fontWeight: 400
                                     }}
-                                    className="input-underline"
+                                    className="input-underline italic"
                                     required
                                 />
                             </div>
                         </div>
-
-                        <button 
-                            type="submit" 
+                        <button
+                            type="submit"
                             disabled={loading}
-                            style={{
-                                backgroundColor: '#071341',
-                                color: 'white',
-                                padding: '1.2rem',
-                                borderRadius: '1rem',
-                                border: 'none',
-                                fontSize: '1.1rem',
-                                fontWeight: '600',
-                                cursor: loading ? 'not-allowed' : 'pointer',
-                                transition: 'all 0.3s',
-                                marginTop: '1rem',
-                                width: '100%',
-                                boxShadow: '0 4px 6px -1px rgba(7, 19, 65, 0.2)'
-                            }}
-                            className="btn-hover"
+                            className="uppercase bg-[#071341] text-white py-5"
                         >
                             {loading ? 'Connexion en cours...' : 'Se connecter'}
                         </button>
                     </form>
-
-                    <div style={{ marginTop: '2.5rem', textAlign: 'center', fontSize: '0.95rem', color: '#64748b' }}>
-                        <p>Pas encore de compte ? <span style={{ fontWeight: '600', color: '#071341' }}>Contactez l'administration</span></p>
+                    <div style={{ marginTop: '2.5rem', textAlign: 'center', color: '#64748b' }}>
+                        <p>Pas encore de compte ? <span style={{ color: '#071341' }}>Contactez l'administration</span></p>
                     </div>
                 </div>
             </div>
-
             <style>{`
                 .input-underline:focus {
                     border-bottom-color: #071341 !important;
