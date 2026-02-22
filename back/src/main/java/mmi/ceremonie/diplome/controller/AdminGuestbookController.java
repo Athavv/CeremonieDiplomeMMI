@@ -22,9 +22,9 @@ public class AdminGuestbookController {
 
     @PutMapping("/{id}/approve")
     public ResponseEntity<Void> approveMessage(@PathVariable Long id) {
-        var msg = repository.findById(id).orElseThrow();
-        msg.setApproved(true);
-        repository.save(msg);
+        GuestbookMessage message = repository.findById(id).orElseThrow();
+        message.setApproved(true);
+        repository.save(message);
         return ResponseEntity.ok().build();
     }
 

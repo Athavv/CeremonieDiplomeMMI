@@ -11,6 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Locale;
 
 @RestController
 @RequestMapping("/api/users")
@@ -41,6 +42,7 @@ public class UserController {
                     user.setFirstname(request.getFirstname());
                     user.setLastname(request.getLastname());
                     user.setEmail(request.getEmail());
+                    user.setUsername(buildUsername(request.getFirstname(), request.getLastname()));
                     if (request.getPassword() != null && !request.getPassword().isEmpty()) {
                         user.setPassword(passwordEncoder.encode(request.getPassword()));
                     }
@@ -54,5 +56,11 @@ public class UserController {
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         repository.deleteById(id);
         return ResponseEntity.noContent().build();
+    }
+
+    private static String buildUsername(String firstname, String lastname) {
+        if (firstname == null) firstname = "";
+        if (lastname == null) lastname = "";
+        return firstname.trim().toLowerCase(Locale.ROOT) + "." + lastname.trim().toLowerCase(Locale.ROOT);
     }
 }
