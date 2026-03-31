@@ -6,32 +6,27 @@ import { useAuth } from '../contexts/AuthContext';
 
 const Admin = () => {
     const [tab, setTab] = useState('guestbook'); // 'guestbook' or 'gallery' or 'users'
-    const [pendingMessages, setPendingMessages] = useState([]);
+    const [messages, setMessages] = useState([]);
     const [galleryImages, setGalleryImages] = useState([]);
     const [newImage, setNewImage] = useState({ url: '', caption: '' });
     const [newUser, setNewUser] = useState({ username: '', password: '', role: 'USER' });
     const { register } = useAuth();
 
     useEffect(() => {
-        if (tab === 'guestbook') fetchPendingMessages();
+        if (tab === 'guestbook') fetchMessages();
         if (tab === 'gallery') fetchGalleryImages();
     }, [tab]);
 
-    const fetchPendingMessages = async () => {
+    const fetchMessages = async () => {
         try {
-            const data = await guestbookService.getPendingMessages();
-            setPendingMessages(data);
+            const data = await guestbookService.getAllMessagesAdmin();
+            setMessages(data);
         } catch (err) { console.error(err); }
-    };
-
-    const approveMessage = async (id) => {
-        await guestbookService.approveMessage(id);
-        fetchPendingMessages();
     };
 
     const deleteMessage = async (id) => {
         await guestbookService.deleteMessage(id);
-        fetchPendingMessages();
+        fetchMessages();
     };
 
     const fetchGalleryImages = async () => {
@@ -91,9 +86,9 @@ const Admin = () => {
                 <div className="card">
                     {tab === 'guestbook' && (
                         <div>
-                            <h3>Messages en attente ({pendingMessages.length})</h3>
+                            <h3>Messages du livre d'or ({messages.length})</h3>
                             <div style={{ marginTop: '1rem' }}>
-                                {pendingMessages.map(msg => (
+                                {messages.map(msg => (
                                     <div key={msg.id} style={{ 
                                         padding: '1rem', 
                                         borderBottom: '1px solid var(--glass-border)',
@@ -106,12 +101,11 @@ const Admin = () => {
                                             <small className="text-muted">{new Date(msg.createdAt).toLocaleString()}</small>
                                         </div>
                                         <div style={{ display: 'flex', gap: '1rem' }}>
-                                            <button onClick={() => approveMessage(msg.id)} style={{ color: '#00C851', background: 'transparent' }}>Approuver</button>
                                             <button onClick={() => deleteMessage(msg.id)} style={{ color: '#ff4444', background: 'transparent' }}>Supprimer</button>
                                         </div>
                                     </div>
                                 ))}
-                                {pendingMessages.length === 0 && <p className="text-muted">Aucun message à modérer.</p>}
+                                {messages.length === 0 && <p className="text-muted">Aucun message dans le livre d'or.</p>}
                             </div>
                         </div>
                     )}

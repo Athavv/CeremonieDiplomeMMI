@@ -1,6 +1,6 @@
 import api from "./api";
 
-const getAllApprovedMessages = async () => {
+const getAllMessages = async () => {
     const response = await api.get('/public/guestbook');
     return response.data;
 };
@@ -10,14 +10,9 @@ const postMessage = async (message) => {
     return response.data;
 };
 
-const getPendingMessages = async () => {
+const getAllMessagesAdmin = async () => {
     const response = await api.get('/guestbook');
     return response.data;
-};
-
-const approveMessage = async (id) => {
-    // Auto-approved now, keeping for compatibility if needed or removing
-    // await api.put(`/admin/guestbook/${id}/approve`);
 };
 
 const deleteMessage = async (id) => {
@@ -25,9 +20,8 @@ const deleteMessage = async (id) => {
 };
 
 export const guestbookService = {
-    getAllApprovedMessages,
+    getAllMessages,
     postMessage,
-    getPendingMessages,
-    approveMessage,
+    getAllMessagesAdmin,
     deleteMessage
 };

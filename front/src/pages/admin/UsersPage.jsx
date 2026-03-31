@@ -14,6 +14,7 @@ const UsersPage = () => {
         password: "",
         role: "USER"
     });
+    const [editingId, setEditingId] = useState(null);
 
     useEffect(() => {
         loadUsers();
@@ -34,16 +35,10 @@ const UsersPage = () => {
 
     const handleDelete = async (id) => {
         if (window.confirm("Êtes-vous sûr de vouloir supprimer cet utilisateur ?")) {
-            // Implement delete logic if service supports it
             await userService.deleteUser(id);
             loadUsers();
-            // alert("Suppression non implémentée dans l'API mockée ou réelle pour l'instant.");
         }
     };
-
-    const [editingId, setEditingId] = useState(null);
-
-    // ...
 
     const handleCreate = () => {
         setFormData({
@@ -62,15 +57,15 @@ const UsersPage = () => {
             firstname: user.firstname || "",
             lastname: user.lastname || "",
             email: user.email || "",
-            password: "", // Password logic needs care (usually separate or optional), leaving empty for now
+            password: "",
             role: "USER"
         });
         setEditingId(user.id);
         setShowForm(true);
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    const handleSubmit = async (event) => {
+        event.preventDefault();
         try {
             if (editingId) {
                 await userService.updateUser(editingId, formData);
@@ -84,7 +79,7 @@ const UsersPage = () => {
         }
     };
 
-    const filteredUsers = users.filter(user => 
+    const filteredUsers = users.filter(user =>
         (user.firstname + " " + user.lastname).toLowerCase().includes(searchTerm.toLowerCase()) ||
         user.email.toLowerCase().includes(searchTerm.toLowerCase())
     );
@@ -94,7 +89,7 @@ const UsersPage = () => {
     if (showForm) {
         return (
             <div className="space-y-6 max-w-4xl mx-auto">
-                <button 
+                <button
                     onClick={() => setShowForm(false)}
                     className="flex items-center gap-2 text-gray-600 hover:text-[#071341] transition-colors"
                 >
@@ -104,7 +99,7 @@ const UsersPage = () => {
 
                 <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
                     <h2 className="text-2xl font-bold text-[#071341] mb-6">{editingId ? "Modifier l'utilisateur" : "Créer un utilisateur"}</h2>
-                    
+
                     <form onSubmit={handleSubmit} className="space-y-6">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
@@ -154,8 +149,6 @@ const UsersPage = () => {
                                 placeholder="••••••••"
                             />
                         </div>
-
-
 
                         <div className="pt-4">
                             <button
@@ -230,8 +223,8 @@ const UsersPage = () => {
                                     <td className="py-4 px-6 text-sm text-gray-600">{user.email}</td>
                                     <td className="py-4 px-6">
                                         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                                            user.role === 'ADMIN' 
-                                            ? 'bg-purple-100 text-purple-800' 
+                                            user.role === 'ADMIN'
+                                            ? 'bg-purple-100 text-purple-800'
                                             : 'bg-green-100 text-green-800'
                                         }`}>
                                             {user.role}
@@ -242,13 +235,13 @@ const UsersPage = () => {
                                     </td>
                                     <td className="py-4 px-6 text-right">
                                         <div className="flex items-center justify-end gap-2">
-                                            <button 
+                                            <button
                                                 onClick={() => handleEdit(user)}
                                                 className="p-2 text-gray-400 hover:text-[#071341] hover:bg-gray-100 rounded-lg transition-colors"
                                             >
                                                 <Edit2 className="h-4 w-4" />
                                             </button>
-                                            <button 
+                                            <button
                                                 onClick={() => handleDelete(user.id)}
                                                 className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
                                             >

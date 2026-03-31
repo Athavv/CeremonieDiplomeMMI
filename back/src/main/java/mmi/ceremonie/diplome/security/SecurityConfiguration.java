@@ -40,11 +40,18 @@ public class SecurityConfiguration {
     @Bean
     public UrlBasedCorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
+        // Local development
         configuration.addAllowedOrigin("http://localhost:5173");
-        configuration.addAllowedOrigin("http://localhost:3000"); 
+        configuration.addAllowedOrigin("http://localhost:3000");
+        // Production - Vercel
+        configuration.addAllowedOrigin("https://ceremonie-diplome-mmi.vercel.app");
+        // Allow any HTTPS from vercel.app subdomains (for preview deployments)
+        configuration.addAllowedOriginPattern("https://.*\\.vercel\\.app");
+        
         configuration.addAllowedMethod("*");
         configuration.addAllowedHeader("*");
         configuration.setAllowCredentials(true);
+        
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;

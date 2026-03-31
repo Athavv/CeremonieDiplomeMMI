@@ -25,18 +25,13 @@ export default function GuestbookAdminPage() {
 
   const loadMessages = async () => {
     try {
-        const data = await guestbookService.getPendingMessages();
+        const data = await guestbookService.getAllMessagesAdmin();
         setMessages(data);
     } catch (err) {
         console.error(err);
     } finally {
         setLoading(false);
     }
-  };
-
-  const handleApprove = async (id) => {
-    await guestbookService.approveMessage(id);
-    loadMessages();
   };
 
   const handleDelete = async (id) => {
@@ -116,7 +111,7 @@ export default function GuestbookAdminPage() {
               ) : (
                 <tr>
                   <td colSpan="4" className="py-8 text-center text-gray-500">
-                    Aucun message en attente
+                    Aucun message dans le livre d'or
                   </td>
                 </tr>
               )}

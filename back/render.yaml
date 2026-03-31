@@ -1,0 +1,29 @@
+services:
+  - type: web
+    name: ceremony-diplome-api
+    runtime: docker
+    plan: free
+    region: oregon
+    envVars:
+      - key: SPRING_DATASOURCE_URL
+        sync: false
+      - key: SPRING_DATASOURCE_USERNAME
+        sync: false
+      - key: SPRING_DATASOURCE_PASSWORD
+        sync: false
+      - key: SPRING_JPA_HIBERNATE_DDL_AUTO
+        value: update
+      - key: APPLICATION_SECURITY_JWT_SECRET_KEY
+        sync: false
+      - key: APPLICATION_SECURITY_JWT_EXPIRATION
+        value: "86400000"
+      - key: APPLICATION_SECURITY_JWT_REFRESH_TOKEN_EXPIRATION
+        value: "604800000"
+      - key: SERVER_PORT
+        value: "8080"
+
+# NOTE: Base de données hébergée sur TiDB Cloud (https://tidbcloud.com)
+# Ajouter manuellement sur Render les variables d'environnement:
+# SPRING_DATASOURCE_URL=jdbc:mysql://your-tidb-host:4000/diplomemmi?useSSL=true&serverTimezone=UTC
+# SPRING_DATASOURCE_USERNAME=your_user@your_cluster
+# SPRING_DATASOURCE_PASSWORD=your_password

@@ -10,14 +10,28 @@ const Login = () => {
     const { login } = useAuth();
     const navigate = useNavigate();
     const [error, setError] = useState('');
+    const [fieldErrors, setFieldErrors] = useState({});
     const [loading, setLoading] = useState(false);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
-        if (!identifier || !password) {
-            return setError('Veuillez remplir tous les champs');
+        setFieldErrors({});
+        
+        const errors = {};
+        if (!identifier) {
+            errors.identifier = 'Identifiant requis';
         }
+        if (!password) {
+            errors.password = 'Mot de passe requis';
+        }
+        
+        if (Object.keys(errors).length > 0) {
+            setFieldErrors(errors);
+            setError('Veuillez remplir tous les champs');
+            return;
+        }
+        
         setLoading(true);
         try {
             const result = await login(identifier, password);
@@ -29,8 +43,9 @@ const Login = () => {
                 }
             } else {
                 setError(result.message || 'Identifiants invalides');
+                setFieldErrors({ identifier: true, password: true });
             }
-        } catch (err) {
+        } catch (error) {
             setError('Une erreur est survenue');
         } finally {
             setLoading(false);
@@ -50,17 +65,52 @@ const Login = () => {
                     <p className="text-[#071341] font-regular">Bienvenue, connectez-vous pour continuer</p>
                 </div>
                 {error && (
-                    <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="mb-8 p-4 bg-red-50 border border-red-200 rounded-xl text-red-500 flex items-center gap-3 text-sm">
-                        ⚠️ {error}
+                    <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="mb-8 p-4 bg-red-50 border-2 border-red-300 rounded-xl text-red-700 flex items-center gap-3 text-sm font-medium">
+                        <span className="text-lg">⚠️</span>
+                        <span>{error}</span>
                     </motion.div>
                 )}
 
                 <form onSubmit={handleSubmit} className="flex flex-col gap-8 font-playfair">
                     <div className="relative">
-                        <input type="text" value={identifier} onChange={(e) => setIdentifier(e.target.value)} placeholder="Identifiant" required className="w-full py-3 bg-transparent border-b border-[#071341] text-base outline-none transition-all rounded-none italic placeholder:text-gray-400 placeholder:not-italic focus:border-b-[2px]" />
+                        <input 
+                            type="text" 
+                            value={identifier} 
+                            onChange={(e) => {
+                                setIdentifier(e.target.value);
+                                if (fieldErrors.identifier) setFieldErrors(prev => ({ ...prev, identifier: false }));
+                            }} 
+                            placeholder="Identifiant" 
+                            required 
+                            className={`w-full py-3 bg-transparent border-b-2 text-base outline-none transition-all rounded-none italic placeholder:text-gray-400 placeholder:not-italic focus:border-b-2 ${
+                                fieldErrors.identifier 
+                                    ? 'border-red-500 focus:border-red-500 text-red-700' 
+                                    : 'border-[#071341] focus:border-[#B8AB38]'
+                            }`}
+                        />
+                        {fieldErrors.identifier && typeof fieldErrors.identifier === 'string' && (
+                            <motion.p initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} className="text-red-500 text-xs mt-1">{fieldErrors.identifier}</motion.p>
+                        )}
                     </div>
                     <div className="relative">
-                        <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Mot de passe" required className="w-full py-3 bg-transparent border-b border-[#071341] text-base outline-none transition-all rounded-none italic placeholder:text-gray-400 placeholder:not-italic focus:border-b-[2px]" />
+                        <input 
+                            type="password" 
+                            value={password} 
+                            onChange={(e) => {
+                                setPassword(e.target.value);
+                                if (fieldErrors.password) setFieldErrors(prev => ({ ...prev, password: false }));
+                            }} 
+                            placeholder="Mot de passe" 
+                            required 
+                            className={`w-full py-3 bg-transparent border-b-2 text-base outline-none transition-all rounded-none italic placeholder:text-gray-400 placeholder:not-italic focus:border-b-2 ${
+                                fieldErrors.password 
+                                    ? 'border-red-500 focus:border-red-500 text-red-700' 
+                                    : 'border-[#071341] focus:border-[#B8AB38]'
+                            }`}
+                        />
+                        {fieldErrors.password && typeof fieldErrors.password === 'string' && (
+                            <motion.p initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} className="text-red-500 text-xs mt-1">{fieldErrors.password}</motion.p>
+                        )}
                     </div>
                     <button type="submit" disabled={loading} className="mt-4 uppercase bg-[#071341] text-white py-4 font-sans tracking-wider hover:bg-[#B8AB38] hover:text-[#071341] transition-all duration-300 hover:-translate-y-1 hover:shadow-lg disabled:opacity-50 disabled:hover:translate-y-0">
                         {loading ? 'Connexion en cours...' : 'Se connecter'}

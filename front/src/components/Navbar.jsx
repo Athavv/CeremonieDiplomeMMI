@@ -9,7 +9,7 @@ const Navbar = () => {
  const location = useLocation();
 
  const [isScrolled, setIsScrolled] = useState(false);
- const [open, setOpen] = useState(false);
+ const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
  const isTransparentPage = location.pathname === '/' || location.pathname === '/login';
 
@@ -44,21 +44,21 @@ const Navbar = () => {
        )}
      </ul>
      <button
-       className="md:hidden text-white text-3xl" onClick={() => setOpen(!open)}>☰
+       className="md:hidden text-white text-3xl" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>☰
      </button>
-     {open && (
+     {isMobileMenuOpen && (
        <div className="absolute top-full left-0 w-full bg-[#071341] text-white flex flex-col items-center py-4 gap-4 md:hidden shadow-xl">
-         <Link to="/" onClick={() => setOpen(false)}>Accueil</Link>
-         <Link to="/planning" onClick={() => setOpen(false)}>Planning</Link>
-         <Link to="/gallery" onClick={() => setOpen(false)}>Galerie photo</Link>
-         <Link to="/guestbook" onClick={() => setOpen(false)}>Livret d'or</Link>
+         <Link to="/" onClick={() => setIsMobileMenuOpen(false)}>Accueil</Link>
+         <Link to="/planning" onClick={() => setIsMobileMenuOpen(false)}>Planning</Link>
+         <Link to="/gallery" onClick={() => setIsMobileMenuOpen(false)}>Galerie photo</Link>
+         <Link to="/guestbook" onClick={() => setIsMobileMenuOpen(false)}>Livret d'or</Link>
          {user?.role === 'ADMIN' && (
-           <Link to="/admin" onClick={() => setOpen(false)}>Admin</Link>
+           <Link to="/admin" onClick={() => setIsMobileMenuOpen(false)}>Admin</Link>
          )}
          {!user ? (
-           <Link to="/login" onClick={() => setOpen(false)}>Connexion</Link>
+           <Link to="/login" onClick={() => setIsMobileMenuOpen(false)}>Connexion</Link>
          ) : (
-           <button onClick={() => { logout(); setOpen(false); }}>Déconnexion</button>
+           <button onClick={() => { logout(); setIsMobileMenuOpen(false); }}>Déconnexion</button>
          )}
        </div>
      )}

@@ -17,8 +17,8 @@ const Gallery = () => {
             try {
                 const data = await galleryService.getAllImages();
                 setImages(data);
-            } catch (err) {
-                console.error(err);
+            } catch (error) {
+                console.error(error);
             } finally {
                 setLoading(false);
             }
@@ -37,23 +37,23 @@ const Gallery = () => {
         return () => window.removeEventListener('keydown', handleKeyDown);
     }, [selectedImageIndex]);
 
-    const handlePrev = (e) => {
-        if(e) e.stopPropagation();
+    const handlePrev = (event) => {
+        if(event) event.stopPropagation();
         setSelectedImageIndex(prev => (prev === 0 ? images.length - 1 : prev - 1));
     };
 
-    const handleNext = (e) => {
-        if(e) e.stopPropagation();
+    const handleNext = (event) => {
+        if(event) event.stopPropagation();
         setSelectedImageIndex(prev => (prev === images.length - 1 ? 0 : prev + 1));
     };
 
-    const handleDownloadSingle = async (e, img) => {
-        e.stopPropagation();
+    const handleDownloadSingle = async (event, image) => {
+        event.stopPropagation();
         try {
-            const url = getImageUrl(img.url);
+            const url = getImageUrl(image.url);
             const response = await fetch(url);
             const blob = await response.blob();
-            saveAs(blob, `souvenir-${img.id}.jpg`);
+            saveAs(blob, `souvenir-${image.id}.jpg`);
         } catch (error) {
             console.error("Download failed", error);
         }
@@ -65,11 +65,11 @@ const Gallery = () => {
         const zip = new JSZip();
         
         try {
-            const promises = images.map(async (img) => {
-                const url = getImageUrl(img.url);
+            const promises = images.map(async (image) => {
+                const url = getImageUrl(image.url);
                 const response = await fetch(url);
                 const blob = await response.blob();
-                zip.file(`souvenir-${img.id}.jpg`, blob);
+                zip.file(`souvenir-${image.id}.jpg`, blob);
             });
 
             await Promise.all(promises);
@@ -122,24 +122,24 @@ const Gallery = () => {
                     </div>
                 ) : images.length > 0 ? (
                     <div className="columns-1 md:columns-2 lg:columns-3 gap-8 space-y-8">
-                        {images.map((img, index) => (
-                            <div 
-                                key={img.id} 
+                        {images.map((image, index) => (
+                            <div
+                                key={image.id}
                                 className="break-inside-avoid relative group overflow-hidden cursor-pointer shadow-xl bg-[#071341]"
                                 onClick={() => setSelectedImageIndex(index)}
                             >
                                 <div className="absolute inset-0 border-2 border-[#B8AB38]/0 group-hover:border-[#B8AB38] z-20 transition-all duration-500 pointer-events-none"></div>
-                                
-                                <img 
-                                    src={getImageUrl(img.url)} 
-                                    alt={img.caption || "Souvenir"}
+
+                                <img
+                                    src={getImageUrl(image.url)}
+                                    alt={image.caption || "Souvenir"}
                                     className="w-full h-auto object-cover transform transition-transform duration-700 group-hover:scale-105 opacity-90 group-hover:opacity-100"
                                 />
-                                
+
                                 <div className="absolute inset-0 bg-gradient-to-t from-[#071341] via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6 justify-between z-10">
-                                    <p className="text-white font-serif italic text-lg">{img.caption}</p>
-                                    <button 
-                                        onClick={(e) => handleDownloadSingle(e, img)}
+                                    <p className="text-white font-serif italic text-lg">{image.caption}</p>
+                                    <button
+                                        onClick={(event) => handleDownloadSingle(event, image)}
                                         className="bg-white/10 p-2 rounded-full hover:bg-[#B8AB38] hover:text-[#071341] backdrop-blur-sm transition-colors text-white"
                                         title="Télécharger"
                                     >
@@ -187,15 +187,15 @@ const Gallery = () => {
                         className="relative max-w-5xl max-h-[85vh] flex flex-col items-center"
                         onClick={(e) => e.stopPropagation()} 
                     >
-                        <img 
-                            src={getImageUrl(images[selectedImageIndex].url)} 
+                        <img
+                            src={getImageUrl(images[selectedImageIndex].url)}
                             alt={images[selectedImageIndex].caption}
                             className="max-h-[75vh] max-w-full object-contain shadow-2xl border-4 border-[#B8AB38]"
                         />
                         <div className="w-full mt-6 flex justify-between items-center text-white border-t border-white/10 pt-4">
                             <p className="text-2xl font-serif italic text-[#B8AB38]">{images[selectedImageIndex].caption}</p>
-                            <button 
-                                onClick={(e) => handleDownloadSingle(e, images[selectedImageIndex])}
+                            <button
+                                onClick={(event) => handleDownloadSingle(event, images[selectedImageIndex])}
                                 className="flex items-center gap-2 px-6 py-2 bg-white/10 hover:bg-[#B8AB38] hover:text-[#071341] transition-colors uppercase tracking-widest text-sm"
                             >
                                 <Download className="h-4 w-4" />

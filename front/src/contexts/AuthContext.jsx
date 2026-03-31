@@ -27,8 +27,8 @@ export const AuthProvider = ({ children }) => {
       setUser({ token, firstLogin, role });
       return { success: true, firstLogin };
     } catch (error) {
-      console.error('Login failed', error);
-      return { success: false, message: 'Invalid credentials' };
+      const message = error.response?.data?.message || error.message || 'Identifiants invalides';
+      return { success: false, message };
     }
   };
 
@@ -48,7 +48,8 @@ export const AuthProvider = ({ children }) => {
       setUser(prev => ({ ...prev, firstLogin: false }));
       return { success: true };
     } catch (error) {
-      return { success: false };
+      const message = error.response?.data?.message || 'Erreur lors du changement de mot de passe';
+      return { success: false, message };
     }
   };
 

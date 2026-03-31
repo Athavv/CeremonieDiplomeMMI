@@ -7,8 +7,7 @@ import { Users, FileText, Image as ImageIcon, CheckCircle, Clock } from 'lucide-
 const AdminDashboard = () => {
     const [stats, setStats] = useState({
         users: 0,
-        pendingMessages: 0,
-        approvedMessages: 0,
+        messages: 0,
         images: 0
     });
     const [recentMessages, setRecentMessages] = useState([]);
@@ -18,18 +17,16 @@ const AdminDashboard = () => {
         const loadData = async () => {
             try {
                 const usersRes = await userService.getAllUsers();
-                const pendingRes = await guestbookService.getPendingMessages();
-                const approvedRes = await guestbookService.getAllApprovedMessages();
+                const messagesRes = await guestbookService.getAllMessagesAdmin();
                 const galleryRes = await galleryService.getAllImages();
 
                 setStats({
                     users: usersRes.data.length,
-                    pendingMessages: pendingRes.length,
-                    approvedMessages: approvedRes.length,
+                    messages: messagesRes.length,
                     images: galleryRes.length
                 });
 
-                setRecentMessages(pendingRes.slice(0, 5));
+                setRecentMessages(messagesRes.slice(0, 5));
             } catch (error) {
                 console.error("Failed to load dashboard data", error);
             } finally {
@@ -50,8 +47,7 @@ const AdminDashboard = () => {
 
     const cards = [
         { title: 'Utilisateurs', value: stats.users, icon: Users, color: 'text-[#071341]', bg: 'bg-[#E0E7FF]' },
-        { title: 'Messages en attente', value: stats.pendingMessages, icon: Clock, color: 'text-[#B8AB38]', bg: 'bg-[#FFFBEB]' },
-        { title: 'Messages validés', value: stats.approvedMessages, icon: CheckCircle, color: 'text-green-600', bg: 'bg-green-100' },
+        { title: 'Messages', value: stats.messages, icon: FileText, color: 'text-[#B8AB38]', bg: 'bg-[#FFFBEB]' },
         { title: 'Photos galerie', value: stats.images, icon: ImageIcon, color: 'text-purple-600', bg: 'bg-purple-100' },
     ];
 
@@ -81,7 +77,7 @@ const AdminDashboard = () => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
                     <div className="flex justify-between items-center mb-6">
-                        <h3 className="text-lg font-bold text-[#071341]">Derniers messages en attente</h3>
+                        <h3 className="text-lg font-bold text-[#071341]">Derniers messages du livre d'or</h3>
                         <span className="text-sm text-[#B8AB38] font-medium cursor-pointer">Voir tout</span>
                     </div>
                     
@@ -99,7 +95,7 @@ const AdminDashboard = () => {
                         </div>
                     ) : (
                         <div className="text-center py-8 text-gray-500">
-                            Aucun message en attente de modération.
+                            Aucun message dans le livre d'or.
                         </div>
                     )}
                 </div>
@@ -114,7 +110,6 @@ const AdminDashboard = () => {
                             Contacter le support
                         </button>
                     </div>
-                    {/* Decorative circle */}
                     <div className="absolute -bottom-24 -right-24 w-64 h-64 bg-[#B8AB38] rounded-full opacity-10 blur-3xl"></div>
                 </div>
             </div>

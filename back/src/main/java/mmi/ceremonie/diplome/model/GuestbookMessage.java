@@ -20,12 +20,15 @@ public class GuestbookMessage {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String author; 
-    private String content;
-    private LocalDateTime createdAt;
-    private boolean approved;
+    private String author;
 
-    @jakarta.persistence.Lob
+    @jakarta.persistence.Column(columnDefinition = "TEXT")
+    private String content;
+
+    private LocalDateTime createdAt;
+
     @jakarta.persistence.Column(columnDefinition = "LONGTEXT")
     private String image;
+
+    private boolean approved = true;
 }

@@ -61,7 +61,7 @@ public class AuthenticationService {
                 )
         );
         var user = repository.findByUsername(request.getUsername())
-                .orElseThrow();
+                .orElseThrow(() -> new RuntimeException("User not found with username: " + request.getUsername()));
         var jwtToken = jwtService.generateToken(user);
         return AuthenticationResponse.builder()
                 .token(jwtToken)

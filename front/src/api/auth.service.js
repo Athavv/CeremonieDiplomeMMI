@@ -6,7 +6,7 @@ const register = async (email, password, role) => {
 };
 
 const login = async (email, password) => {
-  const response = await api.post('/auth/login', { email, password });
+  const response = await api.post('/auth/login', { username: email, password });
   return response.data;
 };
 
